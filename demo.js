@@ -9,16 +9,22 @@ function batchProcessor(jobs) {
     });
   }
   
-const microBatcher = new MicroBatcher(batchProcessor, 5, 5000);
+const microBatcher = new MicroBatcher(batchProcessor, 5, 1000);
 
-for (let i = 0; i < 10; i++) {
-    microBatcher.submitJob(`Job ${i + 1}`);
-}
+// for (let i = 0; i < 10; i++) {
+//     microBatcher.submitJob(`Job ${i + 1}`);
+// }
 
 microBatcher.start()
-microBatcher.start()
+// console.log(microBatcher.jobQueue)
   
+
 setTimeout(() => {
-    microBatcher.shutdown();
-    microBatcher.submitJob("Late job")
-}, 4000);
+  for (let i = 0; i < 10; i++) {
+    microBatcher.submitJob(`Job ${i + 1}`);
+  }
+})
+// setTimeout(() => {
+//     microBatcher.shutdown();
+//     microBatcher.submitJob("Late job")
+// }, 4000);

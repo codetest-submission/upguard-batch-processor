@@ -23,38 +23,38 @@ class MicroBatcher {
 
     start() {
         if(!this.#intervalRef) {
+            console.log(`INFO [${new Date().toISOString()}] Processor started.`)
             this.#processJobs()
-            this.#intervalRef = setInterval(() => {
-                if(this.shutdownRequested && this.#jobQueue.length === 0) {
-                    clearInterval(this.#intervalRef)
-                    this.#intervalRef = null
-                    console.log(`INFO [${new Date().toISOString()}] Remaining jobs finished, exit.`, )
-                    return
-                }
-                this.#processJobs()
-            }, this.#batchInterval)
+            this.#intervalRef = setInterval(() => {this.#processJobs()}, this.#batchInterval)
         } else {
-            console.error(`EROR [${new Date().toISOString()}] Jobs processing already started.`)
+            console.warn(`WARN [${new Date().toISOString()}] Processor already started.`)
         }
     }
 
     #processJobs() {
+        if(this.#shutdownRequested && this.#jobQueue.length === 0) {
+            clearInterval(this.#intervalRef)
+            this.#intervalRef = null
+            console.log(`INFO [${new Date().toISOString()}] Remaining jobs finished, exit.`)
+            return
+        }
         const batchJobs = this.#jobQueue.splice(0, this.#batchSize)                
         this.#batchProcessor(batchJobs)
             .then(res => 
                 console.log(`INFO [${new Date().toISOString()}] ${batchJobs.length} jobs processed: `, res))
             .catch(err => 
-                console.error('Batch processed error: ', err))
+                console.error(`EROR [${new Date().toISOString()}] Batch processed error: `, err))
     }
 
     shutdown() {
-        if(this.intervalRef) {
+        if(this.#intervalRef) {
             console.log(`INFO [${new Date().toISOString()}] Shutdown requested, ${this.#jobQueue.length} jobs left.`)
-            this.shutdownRequested = true
+            this.#shutdownRequested = true
         } else {
-            console.error(`EROR [${new Date().toISOString()}]Jobs processing not started yet.`)
+            console.warn(`WARN [${new Date().toISOString()}] Jobs processing not started yet.`)
         }
     }
+
  }
 
  export default MicroBatcher;
