@@ -54,7 +54,6 @@ class MicroBatcher {
             console.warn(`WARN [${new Date().toISOString()}] Jobs processing not started yet.`)
         }
     }
-
  }
 
  export default MicroBatcher;
