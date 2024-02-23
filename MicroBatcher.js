@@ -47,9 +47,11 @@ class MicroBatcher {
     }
 
     shutdown() {
-        if(this.#intervalRef) {
+        if(this.#intervalRef && !this.#shutdownRequested) {
             console.log(`INFO [${new Date().toISOString()}] Shutdown requested, ${this.#jobQueue.length} jobs left.`)
             this.#shutdownRequested = true
+        } else if (this.#shutdownRequested) {
+            console.warn(`WARN [${new Date().toISOString()}] Shutdown already requested.`)
         } else {
             console.warn(`WARN [${new Date().toISOString()}] Jobs processing not started yet.`)
         }

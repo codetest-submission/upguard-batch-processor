@@ -46,6 +46,14 @@ describe("MicroBatcher", () => {
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
     })
 
+    test("should not be able to shutdown again when a previous shutdown requested", () => {
+        const testMicroBatcher = new MicroBatcher(batchProcessorResolvedMock)
+        testMicroBatcher.start()
+        testMicroBatcher.shutdown()
+        testMicroBatcher.shutdown()
+        expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+    })
+
     test("should print error when batch processor failed",  () => {
         const testMicroBatcher = new MicroBatcher(batchProcessorRejectedMock)
         try{
